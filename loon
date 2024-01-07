@@ -11,31 +11,37 @@
 [General]
 # 设置响应ssid环境下使用的策略，如"loon-wifi5g":DIRECT，表示在loon-wifi5g这个wifi网络下使用直连模式，"cellular":PROXY，表示在蜂窝网络下使用代理模式，"default":RULE，默认使用分流模式
 # ssid-trigger = "default":rule, "cellular":rule,"WiFi SSID":DIRECT
-ipv6 = true
-# dns服务，system表示系统自带dns服务器
-dns-server = system,119.29.29.29,223.5.5.5
-# DoH server，标准的url格式，以,分割多个地址
-doh-server = https://223.5.5.5/dns-query,https://dns.alidns.com/dns-query
-# 是否允许wifi下共享网络
-allow-wifi-access = false
-# wifi共享开启时http服务的端口
-wifi-access-http-port = 7222
-# wifi共享开启时socks5服务的端口
-wifi-access-socks5-port = 7221
-# 节点测速时的url
-proxy-test-url = http://1.1.1.1/generate_204
-# 节点测速时的超时秒数
-test-timeout = 3
-# 指定流量使用哪个网络接口进行转发，目前包含三种模式:
- # Auto: 系统自动分配
- # Cellular: 在WiFi和蜂窝数据都开启的情况下指定使用蜂窝网络
- # Performace: 在WiFi和蜂窝数据都开启的情况下使用最优的网络接口
- # Balance: 在WiFi和蜂窝数据都开启的情况下，均衡使用网络接口
-interface-mode = auto
-# 一个节点连接失败几次后会进行节点切换，默认3次
-switch-node-after-failure-times = 3
-# 屏蔽443UDP端口
+[General]
+# IPv6 开关
+ipv6 = false
+# DNS 服务器
+dns-server = system,114.114.114.114,119.29.29.29,119.28.28.28,223.5.5.5,223.6.6.6,8.8.8.8,8.8.4.4,1.1.1.1,1.0.0.1
+# DoH 服务器
+doh-server = https://doh.pub/dns-query,https://dns.alidns.com/dns-query,https://1.12.12.12/dns-query,https://120.53.53.53/dns-query,https://223.5.5.5/dns-query,https://223.6.6.6/dns-query
+# UDP 禁用端口
 disable-udp-ports = 443
+# UDP 开关
+allow-udp-proxy = true
+# 是否开启局域网代理访问
+allow-wifi-access = false
+# 开启局域网访问后的 HTTP 代理端口
+wifi-access-http-port = 7222
+# 开启局域网访问后的 SOCKS5 代理端口
+wifi-access-socks5-port = 7221
+# 代理测速 URL
+proxy-test-url = http://yx.rdone.shop
+# 测速超时 (s)
+test-timeout = 5
+# 网络接口模式
+interface-mode = auto
+# SNI规则匹配开关
+sni-sniffing = true
+# 丢弃 STUN
+disable-stun = false
+# 策略切换时关闭链接
+disconnect-on-policy-change = false
+# 节点连续失败几次后进行节点切换
+switch-node-after-failure-times = 3
 # 订阅资源解析器链接
 resource-parser = https://gitlab.com/sub-store/Sub-Store/-/releases/permalink/latest/downloads/sub-store-parser.loon.min.js
 # 自定义geoip数据库的url
@@ -44,6 +50,10 @@ geoip-url = https://gitlab.com/Masaiki/GeoIP2-CN/-/raw/release/Country.mmdb
 skip-proxy = 192.168.0.0/16,10.0.0.0/8,172.16.0.0/12,localhost,*.local,e.crashlynatics.com
 # 目前iOS设备上的流量有两种方式传递给Loon，分别是HTTP Proxy和TUN（可以简单理解为虚拟网卡），bypass-tun则和TUN有关，如果配置了该参数，那么所配置的这些IP段、域名就会不交给Loon来处理，系统直接处理
 bypass-tun = 10.0.0.0/8,100.64.0.0/10,127.0.0.0/8,169.254.0.0/16,172.16.0.0/12,192.0.0.0/24,192.0.2.0/24,192.88.99.0/24,192.168.0.0/16,198.51.100.0/24,203.0.113.0/24,224.0.0.0/4,239.255.255.250/32,255.255.255.255/32
+# Always Real IP Hosts
+# > DNS 数据包将被转发到上游 DNS 服务器。
+real-ip = *.lan, *.direct, cable.auth.com, *.msftconnecttest.com, *.msftncsi.com, network-test.debian.org, detectportal.firefox.com, resolver1.opendns.com, *.srv.nintendo.net, *.stun.playstation.net, xbox.*.microsoft.com, *.xboxlive.com, stun.*, global.turn.twilio.com, global.stun.twilio.com, app.yinxiang.com, injections.adguard.org, local.adguard.org, cable.auth.com, localhost.*.qq.com, localhost.*.weixin.qq.com, *.logon.battlenet.com.cn, *.logon.battle.net, *.blzstatic.cn, music.163.com, *.music.163.com, *.126.net, musicapi.taihe.com, music.taihe.com, songsearch.kugou.com, trackercdn.kugou.com, *.kuwo.cn, api-jooxtt.sanook.com, api.joox.com, joox.com, y.qq.com, *.y.qq.com, streamoc.music.tc.qq.com, mobileoc.music.tc.qq.com, isure.stream.qqmusic.qq.com, dl.stream.qqmusic.qq.com, aqqmusic.tc.qq.com, amobile.music.tc.qq.com, *.xiami.com, *.music.migu.cn, music.migu.cn, proxy.golang.org, *.mcdn.bilivideo.cn, *.cmpassport.com, id6.me, open.e.189.cn, mdn.open.wo.cn, opencloud.wostore.cn, auth.wosms.cn, *.jegotrip.com.cn, *.icitymobile.mobi, *.pingan.com.cn, *.cmbchina.com, pool.ntp.org, *.pool.ntp.org, ntp.*.com, time.*.com, ntp?.*.com, time?.*.com, time.*.gov, time.*.edu.cn, *.ntp.org.cn, PDC._msDCS.*.*, DC._msDCS.*.*, GC._msDCS.*.*
+
 
 [Proxy]
 
@@ -87,26 +97,69 @@ OpenAI = select,美国节点,香港节点,狮城节点,日本节点,台湾节点
 FINAL,兜底分流
 
 [Remote Rule]
-https://github.com/Repcz/Tool/raw/X/Loon/Rules/APNs.list, policy = DIRECT, tag = 苹果推送服务, enabled = true
-https://github.com/Repcz/Tool/raw/X/Loon/Rules/OpenAI.list, policy=OpenAI, tag=OpenAI, enabled=true
-https://github.com/Repcz/Tool/raw/X/Loon/Rules/Bilibili.list, policy=哔哩哔哩, tag=Bilibli, enabled=true
-https://github.com/Repcz/Tool/raw/X/Loon/Rules/Apple.list, policy=苹果服务, tag=Apple, enabled=true
-https://github.com/Repcz/Tool/raw/X/Loon/Rules/YouTube.list, policy=谷歌服务, tag=Youtube, enabled=true
-https://github.com/Repcz/Tool/raw/X/Loon/Rules/Google.list, policy=谷歌服务, tag=Google, enabled=true
-https://github.com/Repcz/Tool/raw/X/Loon/Rules/Microsoft.list, policy=微软服务, tag=Microsoft, enabled=true
-https://github.com/Repcz/Tool/raw/X/Loon/Rules/Github.list, policy=微软服务, tag=Github, enabled=true
-https://github.com/Repcz/Tool/raw/X/Loon/Rules/Steam.list, policy=游戏平台, tag=Steam, enabled=true
-https://github.com/Repcz/Tool/raw/X/Loon/Rules/Epic.list, policy=游戏平台, tag=Epic, enabled=true
-https://github.com/Repcz/Tool/raw/X/Loon/Rules/Twitter.list, policy=推特消息, tag=Twitter, enabled=true
-https://github.com/Repcz/Tool/raw/X/Loon/Rules/Telegram.list, policy=电报消息, tag=Telegram, enabled=true
-https://github.com/Repcz/Tool/raw/X/Loon/Rules/ProxyMedia.list, policy=国际媒体, tag=Media, enabled=true
-https://github.com/Repcz/Tool/raw/X/Loon/Rules/ProxyGFW.list, policy=国外网站, tag=Proxy, enabled=true
-https://github.com/Repcz/Tool/raw/X/Loon/Rules/ChinaASN.list, policy=DIRECT, tag=ChinaASN, enabled=false
-https://github.com/Repcz/Tool/raw/X/Loon/Rules/Lan.list, policy=DIRECT, tag=LAN, enabled=true
-https://github.com/Repcz/Tool/raw/X/Loon/Rules/FILTER_REGION.list, policy=DIRECT, tag=GeoIP@CN, enabled=true
+https://whatshub.top/rule/AntiAD.list
+https://whatshub.top/rule/ChatGPT.list
+https://whatshub.top/rule/YouTube.list
+https://whatshub.top/rule/Telegram.list
+https://whatshub.top/rule/Spotify.list
+https://whatshub.top/rule/ai.list
+https://whatshub.top/rule/Global.list
+https://whatshub.top/rule/ASN-lite.list
+https://whatshub.top/rule/Proxy.list
+https://whatshub.top/rule/China.list
+https://whatshub.top/rule/IPs-CN.list
+https://whatshub.top/rule/ASN-CN.list
 
 
 [Host]
+*.id.ui.direct = server:system
+unifi.ui.com = server:system
+unifi.local = server:system
+networks.unifi.ui.com = server:system
+amplifi.lan = server:system
+router.synology.com = server:system
+sila.razer.com = server:system
+router.asus.com = server:system
+routerlogin.net = server:system
+orbilogin.com = server:system
+www.LinksysSmartWiFi.com = server:system
+LinksysSmartWiFi.com = server:system
+myrouter.local = server:system
+instant.arubanetworks.com = server:system
+setmeup.arubanetworks.com = server:system
+www.miwifi.com = server:system
+miwifi.com = server:system
+mediarouter.home = server:system
+tplogin.cn = server:system
+tplinklogin.net = server:system
+tplinkwifi.net = server:system
+melogin.cn = server:system
+falogin.cn = server:system
+tendawifi.com = server:system
+leike.cc = server:system
+zte.home = server:system
+p.to = server:system
+phicomm.me = server:system
+hiwifi.com = server:system
+peiluyou.com = server:system
+_hotspot_.m2m = server:system
+hotspot.cslwifi.com = server:system
+*.163.com = server:119.29.29.29
+*.126.com = server:119.29.29.29
+*.126.net = server:119.29.29.29
+*.127.net = server:119.29.29.29
+*.taobao.com = server:223.5.5.5
+*.tmall.com = server:223.5.5.5
+*.alipay.com = server:223.5.5.5
+*.alicdn.com = server:223.5.5.5
+*.aliyun.com = server:223.5.5.5
+*.jd.com = server:119.28.28.28
+*.tencent.com = server:119.28.28.28
+*.weixin.com = server:119.28.28.28
+*.bilibili.com = server:119.29.29.29
+*.netease.com = server:119.29.29.29
+*.mi.com = server:119.29.29.29
+*.xiaomi.com = server:119.29.29.29
 
 
 [Rewrite]
@@ -114,57 +167,33 @@ https://github.com/Repcz/Tool/raw/X/Loon/Rules/FILTER_REGION.list, policy=DIRECT
 [Script]
 
 [Plugin]
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/AliYunDrive_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Amap_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/BabyTree_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Baidu_input_method_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/BaiduNetDisk_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/BaiduSearchWebpage_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Bilibili_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Cainiao_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/CaixinMedia_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/CoolApk_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Daily_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/DragonRead_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Himalaya_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/IThome_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/JD_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/NeteaseCloudMusic_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/PiPiXia_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/QiDian_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/QQMusic_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/RedPaper_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/smzdm_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Spotify_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Taobao_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Tieba_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/TubeMax_remove_ads.plugin, policy = 国外网站 enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Umetrip_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Weibo_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Weixin_Official_Accounts_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/YouTube_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Zhihu_remove_ads.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/1.1.1.1.plugin, enabled = false
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Auto_Join_TF.plugin, policy = DIRECT, enabled = false
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/BingAI.plugin, policy = 国外网站 enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/BoxJS.plugin, policy = 国外网站 enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Fileball_mount.plugin, enabled = false
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Google.plugin, enabled = false
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/JD_Price.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/LoonGallery.plugin, policy = 国外网站 enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Node_detection_tool.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Prevent_DNS_Leaks.plugin, policy = 国外网站 enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/QuickSearch.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Remove_ads_by_keli.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Script-Hub.plugin, policy = 国外网站 enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Spotify_lyrics_translation.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Sub-Store.plugin, policy = 国外网站 enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/TestFlight.plugin, policy = DIRECT, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/TikTok_redirect.plugin, policy = 国外网站 enabled = false
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/VVebo_repair.plugin, enabled = false
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/WARP_Node_Query.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/Weixin_external_links_unlock.plugin, enabled = true
-https://gitlab.com/lodepuly/vpn_tool/-/raw/master/Tool/Loon/Plugin/YouTubeSubtitlesTranslation.plugin, enabled = true
+https://raw.githubusercontent.com/zqzess/rule_for_quantumultX/master/Loon/Plugin/FanQieNovel.plugin, tag=番茄小说广告屏蔽, enabled=true
+https://raw.githubusercontent.com/VirgilClyne/GetSomeFries/main/plugin/DNS.plugin, enabled=true
+https://raw.githubusercontent.com/VirgilClyne/iRingo/main/plugin/Weather.plugin, enabled=true
+https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Plugin/For-own-use.plugin, enabled=true
+https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Plugin/Block/ZhiHu.plugin, enabled=true
+https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Plugin/jd_tb_price.plugin, enabled=true
+https://raw.githubusercontent.com/sub-store-org/Sub-Store/master/config/Loon.plugin, enabled=true
+https://raw.githubusercontent.com/NobyDa/Script/master/Loon/Loon_GetCookie.plugin, enabled=true
+https://raw.githubusercontent.com/deezertidal/private/master/plugallery/GeoLocation.plugin, enabled=true
+https://raw.githubusercontent.com/app2smile/rules/master/plugin/qidian.plugin, enabled=true
+https://raw.githubusercontent.com/app2smile/rules/master/plugin/adsense.plugin, enabled=true
+https://whatshub.top/plugin/fanqienovel.plugin, enabled=true
+https://whatshub.top/plugin/SpotifyPremium.plugin, enabled=true
+https://whatshub.top/plugin/xxyh.plugin, enabled=true
+https://whatshub.top/plugin/youtube.plugin, enabled=true
+https://whatshub.top/plugin/gddt.plugin, enabled=true
+https://whatshub.top/plugin/wsgj.plugin, enabled=true
+https://whatshub.top/plugin/aqc.plugin, enabled=true
+https://whatshub.top/plugin/biliad.plugin, enabled=true
+https://whatshub.top/plugin/wechatad.plugin, enabled=true
+https://whatshub.top/plugin/bili.plugin, enabled=true
+https://whatshub.top/plugin/DisableUpdate.plugin, enabled=true
+https://whatshub.top/plugin/AdBlock.plugin, enabled=true
+https://whatshub.top/plugin/BaiduCloud.plugin, enabled=true
+https://whatshub.top/plugin/startingad.plugin, enabled=true
+https://raw.githubusercontent.com/chxm1023/Script_X/main/Collections.plugin, tag=APP解锁合集, enabled=true
+
 
 
 [Mitm]
