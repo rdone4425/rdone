@@ -1,0 +1,19 @@
+name: Run conf file
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run-conf-file:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run conf file
+        run: |
+          # Replace "my-conf-file.conf" with the name of your conf file
+          confd -onetime -backend env /loon.conf
