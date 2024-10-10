@@ -11,7 +11,7 @@ echo
 apt update && apt upgrade -y
 apt install -y nginx mysql-server php php-fpm php-mysql php-curl php-gd php-mbstring php-xml php-zip unzip git
 
-# 确保目标目录为空
+# 强制删除并重新创建目标目录
 rm -rf /var/www/dnsmgr
 mkdir -p /var/www/dnsmgr
 
@@ -42,11 +42,9 @@ server {
 }
 EOF
 
-# 删除已存在的符号链接
+# 强制删除并重新创建符号链接
 rm -f /etc/nginx/sites-enabled/dnsmgr
-
-# 创建新的符号链接
-ln -s /etc/nginx/sites-available/dnsmgr /etc/nginx/sites-enabled/
+ln -sf /etc/nginx/sites-available/dnsmgr /etc/nginx/sites-enabled/
 
 # 检查Nginx配置
 nginx -t
@@ -59,9 +57,13 @@ else
     exit 1
 fi
 
-# 创建数据库和用户（如果不存在）
-mysql -e "CREATE DATABASE IF NOT EXISTS dnsmgr;"
-mysql -e "CREATE USER IF NOT EXISTS 'dnsmgr'@'localhost' IDENTIFIED BY '$db_password';"
+# 删除现有的数据库和用户（如果存在）
+mysql -e "DROP DATABASE IF EXISTS dnsmgr;"
+mysql -e "DROP USER IF EXISTS 'dnsmgr'@'localhost';"
+
+# 创建新的数据库和用户
+mysql -e "CREATE DATABASE dnsmgr;"
+mysql -e "CREATE USER 'dnsmgr'@'localhost' IDENTIFIED BY '$db_password';"
 mysql -e "GRANT ALL PRIVILEGES ON dnsmgr.* TO 'dnsmgr'@'localhost';"
 mysql -e "FLUSH PRIVILEGES;"
 
@@ -70,8 +72,8 @@ mysql dnsmgr < /var/www/dnsmgr/app/sql/install.sql
 
 # 配置环境变量
 cp /var/www/dnsmgr/.example.env /var/www/dnsmgr/.env
-sed -i 's/DB_DATABASE=.*/DB_DATABASE=dnsmgr/' /var/www/dnsmgr/.env
-sed -i 's/DB_USERNAME=.*/DB_USERNAME=dnsmgr/' /var/www/dnsmgr/.env
+sed -i "s/DB_DATABASE=.*/DB_DATABASE=dnsmgr/" /var/www/dnsmgr/.env
+sed -i "s/DB_USERNAME=.*/DB_USERNAME=dnsmgr/" /var/www/dnsmgr/.env
 sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$db_password/" /var/www/dnsmgr/.env
 
 # 安装完成后打印域名
