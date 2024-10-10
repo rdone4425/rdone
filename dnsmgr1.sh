@@ -15,24 +15,22 @@ echo
 rm -rf /var/www/dnsmgr
 mkdir -p /var/www/dnsmgr
 
-# 克隆最新版本的dnsmgr_caihong
-git clone https://github.com/find-xposed-magisk/dnsmgr_caihong.git /var/www/dnsmgr
+# 下载最新版本的dnsmgr_caihong
+wget https://github.com/find-xposed-magisk/dnsmgr_caihong/archive/refs/tags/main_1.7.1.zip
+unzip main_1.7.1.zip
+mv dnsmgr_caihong-main_1.7.1 /var/www/dnsmgr
 
 # 设置目录权限
 chown -R www-data:www-data /var/www/dnsmgr
 chmod -R 755 /var/www/dnsmgr
 
-# 检查Nginx是否已启动
-if ! systemctl is-active --quiet nginx; then
-    echo "Nginx未启动，正在启动Nginx..."
-    systemctl start nginx
-fi
+# 检查并启动Nginx
+systemctl start nginx
+systemctl enable nginx
 
-# 检查MySQL是否已启动
-if ! systemctl is-active --quiet mysql; then
-    echo "MySQL未启动，正在启动MySQL..."
-    systemctl start mysql
-fi
+# 检查并启动MySQL
+systemctl start mysql
+systemctl enable mysql
 
 # 配置Nginx
 cat > /etc/nginx/sites-available/dnsmgr << EOF
@@ -80,7 +78,7 @@ mysql -e "CREATE USER 'dnsmgr'@'localhost' IDENTIFIED BY '$db_password';"
 mysql -e "GRANT ALL PRIVILEGES ON dnsmgr.* TO 'dnsmgr'@'localhost';"
 mysql -e "FLUSH PRIVILEGES;"
 
-# 导入数据库结构
+# 导入数库结构
 mysql dnsmgr < /var/www/dnsmgr/app/sql/install.sql
 
 # 配置环境变量
