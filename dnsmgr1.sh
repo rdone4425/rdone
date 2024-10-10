@@ -22,6 +22,18 @@ git clone https://github.com/find-xposed-magisk/dnsmgr_caihong.git /var/www/dnsm
 chown -R www-data:www-data /var/www/dnsmgr
 chmod -R 755 /var/www/dnsmgr
 
+# 检查Nginx是否已启动
+if ! systemctl is-active --quiet nginx; then
+    echo "Nginx未启动，正在启动Nginx..."
+    systemctl start nginx
+fi
+
+# 检查MySQL是否已启动
+if ! systemctl is-active --quiet mysql; then
+    echo "MySQL未启动，正在启动MySQL..."
+    systemctl start mysql
+fi
+
 # 配置Nginx
 cat > /etc/nginx/sites-available/dnsmgr << EOF
 server {
@@ -43,6 +55,7 @@ server {
 EOF
 
 # 强制删除并重新创建符号链接
+rm -f /etc/nginx/sites-enabled/default
 rm -f /etc/nginx/sites-enabled/dnsmgr
 ln -sf /etc/nginx/sites-available/dnsmgr /etc/nginx/sites-enabled/
 
