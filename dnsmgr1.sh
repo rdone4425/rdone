@@ -1,15 +1,15 @@
 #!/bin/bash
 
+# 更新系统并安装必要的软件包
+apt update && apt upgrade -y
+apt install -y nginx mysql-server php php-fpm php-mysql php-curl php-gd php-mbstring php-xml php-zip unzip git
+
 # 提示用户输入域名
 read -p "请输入您的域名: " domain_name
 
 # 提示用户输入数据库密码
 read -sp "请输入数据库密码: " db_password
 echo
-
-# 更新系统并安装必要的软件包
-apt update && apt upgrade -y
-apt install -y nginx mysql-server php php-fpm php-mysql php-curl php-gd php-mbstring php-xml php-zip unzip git
 
 # 强制删除并重新创建目标目录
 rm -rf /var/www/dnsmgr
