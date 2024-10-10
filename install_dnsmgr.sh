@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# 提示用户输入域名
+read -p "请输入您的域名: " domain_name
+
+# 提示用户输入数据库密码
+read -sp "请输入数据库密码: " db_password
+echo
+
 # 更新系统并安装必要的软件包
 apt update && apt upgrade -y
 apt install -y nginx mysql-server php php-fpm php-mysql php-curl php-gd php-mbstring php-xml php-zip unzip
@@ -17,7 +24,7 @@ chmod -R 755 /var/www/dnsmgr
 cat > /etc/nginx/sites-available/dnsmgr << EOF
 server {
     listen 80;
-    server_name your_domain.com;
+    server_name $domain_name;
     root /var/www/dnsmgr/public;
     index index.php index.html index.htm;
 
@@ -40,7 +47,7 @@ systemctl restart nginx
 
 # 创建数据库和用户
 mysql -e "CREATE DATABASE dnsmgr;"
-mysql -e "CREATE USER 'dnsmgr'@'localhost' IDENTIFIED BY 'your_password';"
+mysql -e "CREATE USER 'dnsmgr'@'localhost' IDENTIFIED BY '$db_password';"
 mysql -e "GRANT ALL PRIVILEGES ON dnsmgr.* TO 'dnsmgr'@'localhost';"
 mysql -e "FLUSH PRIVILEGES;"
 
@@ -51,10 +58,7 @@ mysql dnsmgr < /var/www/dnsmgr/app/sql/install.sql
 cp /var/www/dnsmgr/.example.env /var/www/dnsmgr/.env
 sed -i 's/DB_DATABASE=.*/DB_DATABASE=dnsmgr/' /var/www/dnsmgr/.env
 sed -i 's/DB_USERNAME=.*/DB_USERNAME=dnsmgr/' /var/www/dnsmgr/.env
-sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=your_password/' /var/www/dnsmgr/.env
+sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$db_password/" /var/www/dnsmgr/.env
 
-# 安装Composer依赖
-cd /var/www/dnsmgr
-composer install --no-dev
-
-echo "安装完成！请访问 http://your_domain.com 来完成最后的配置步骤。"
+# 安装完成后打印域名
+echo "安装完成！请访问 http://$domain_name 来完成最后的配置步骤。"
