@@ -2,7 +2,7 @@
 
 # 更新系统并安装必要的软件包
 apt update && apt upgrade -y
-apt install -y nginx mysql-server php php-fpm php-mysql php-curl php-gd php-mbstring php-xml php-zip unzip git
+apt install -y nginx mysql-server php php-fpm php-mysql php-curl php-gd php-mbstring php-xml php-zip unzip wget
 
 # 提示用户输入域名
 read -p "请输入您的域名: " domain_name
@@ -18,7 +18,9 @@ mkdir -p /var/www/dnsmgr
 # 下载最新版本的dnsmgr_caihong
 wget https://github.com/find-xposed-magisk/dnsmgr_caihong/archive/refs/tags/main_1.7.1.zip
 unzip main_1.7.1.zip
-mv dnsmgr_caihong-main_1.7.1 /var/www/dnsmgr
+rm -rf /var/www/dnsmgr/*
+mv dnsmgr_caihong-main_1.7.1/* /var/www/dnsmgr/
+rm -rf dnsmgr_caihong-main_1.7.1 main_1.7.1.zip
 
 # 设置目录权限
 chown -R www-data:www-data /var/www/dnsmgr
@@ -71,6 +73,7 @@ fi
 # 删除现有的数据库和用户（如果存在）
 mysql -e "DROP DATABASE IF EXISTS dnsmgr;"
 mysql -e "DROP USER IF EXISTS 'dnsmgr'@'localhost';"
+mysql -e "FLUSH PRIVILEGES;"
 
 # 创建新的数据库和用户
 mysql -e "CREATE DATABASE dnsmgr;"
@@ -78,7 +81,7 @@ mysql -e "CREATE USER 'dnsmgr'@'localhost' IDENTIFIED BY '$db_password';"
 mysql -e "GRANT ALL PRIVILEGES ON dnsmgr.* TO 'dnsmgr'@'localhost';"
 mysql -e "FLUSH PRIVILEGES;"
 
-# 导入数库结构
+# 导入数据库结构
 mysql dnsmgr < /var/www/dnsmgr/app/sql/install.sql
 
 # 配置环境变量
