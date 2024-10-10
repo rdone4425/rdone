@@ -11,8 +11,9 @@ echo
 apt update && apt upgrade -y
 apt install -y nginx mysql-server php php-fpm php-mysql php-curl php-gd php-mbstring php-xml php-zip unzip git
 
-# 删除之前的安装（如果存在）
+# 确保目标目录为空
 rm -rf /var/www/dnsmgr
+mkdir -p /var/www/dnsmgr
 
 # 克隆最新版本的dnsmgr_caihong
 git clone https://github.com/find-xposed-magisk/dnsmgr_caihong.git /var/www/dnsmgr
@@ -58,10 +59,8 @@ else
     exit 1
 fi
 
-# 检查数据库是否存在，如果不存在则创建
+# 创建数据库和用户（如果不存在）
 mysql -e "CREATE DATABASE IF NOT EXISTS dnsmgr;"
-
-# 检查用户是否存在，如果不存在则创建
 mysql -e "CREATE USER IF NOT EXISTS 'dnsmgr'@'localhost' IDENTIFIED BY '$db_password';"
 mysql -e "GRANT ALL PRIVILEGES ON dnsmgr.* TO 'dnsmgr'@'localhost';"
 mysql -e "FLUSH PRIVILEGES;"
